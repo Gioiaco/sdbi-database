@@ -1,10 +1,9 @@
-SELECT COUNT(b.ID_Biglietto) AS Numero_BigliettiVenduti
+SELECT b.Codice_PNR, s_partenza.Nome_Stazione AS Stazione_Partenza, s_arrivo.Nome_Stazione AS Stazione_Arrivo, c.Data_Ora_Partenza, c.Data_Ora_Arrivo, b.Prezzo
 FROM Biglietti b
 JOIN Corse c ON b.Corsa_ID = c.ID_Corsa
 JOIN Tratte t ON c.Tratta_ID = t.ID_Tratta
-WHERE t.Stazione_Partenza_ID = (SELECT ID_Stazione FROM Stazioni WHERE Nome_Stazione = 'Firenze SMN')
+JOIN Stazioni s_partenza ON t.Stazione_Partenza_ID = s_partenza.ID_Stazione
+JOIN Stazioni s_arrivo ON t.Stazione_Arrivo_ID = s_arrivo.ID_Stazione
+WHERE t.Stazione_Partenza_ID = (SELECT ID_Stazione FROM Stazioni WHERE Nome_Stazione = 'Roma Termini')
   AND t.Stazione_Arrivo_ID = (SELECT ID_Stazione FROM Stazioni WHERE Nome_Stazione = 'Milano Centrale')
-  AND c.Data_Ora_Partenza BETWEEN '2025-04-01' AND '2025-04-30';
-
-
-
+  AND DATE(c.Data_Ora_Partenza) = '2025-04-15';
