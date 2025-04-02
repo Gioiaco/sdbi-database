@@ -5,7 +5,7 @@
 -- Dumped from database version 17.4 (Postgres.app)
 -- Dumped by pg_dump version 17.0
 
--- Started on 2025-04-02 12:37:35 CEST
+-- Started on 2025-04-02 13:08:35 CEST
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -18,6 +18,122 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 222 (class 1259 OID 16478)
+-- Name: biglietti; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.biglietti (
+    id_biglietto integer NOT NULL,
+    codice_pnr character varying(6) NOT NULL,
+    corsa_id integer NOT NULL,
+    passeggero_id integer NOT NULL,
+    data_ora_acquisto timestamp without time zone NOT NULL,
+    prezzo numeric NOT NULL,
+    posto character varying(4) NOT NULL
+);
+
+
+ALTER TABLE public.biglietti OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 24582)
+-- Name: cambi; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cambi (
+    id_cambio integer NOT NULL,
+    biglietto_id integer NOT NULL,
+    ordine_cambio integer NOT NULL,
+    corsa_partenza_id integer,
+    corsa_arrivo_id integer,
+    stazione_cambio_id integer NOT NULL,
+    orario_arrivo_precedente timestamp without time zone NOT NULL,
+    orario_partenza_successivo timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.cambi OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 16445)
+-- Name: corse; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.corse (
+    id_corsa integer NOT NULL,
+    tratta_id integer NOT NULL,
+    treno_id integer NOT NULL,
+    data_ora_partenza timestamp without time zone NOT NULL,
+    data_ora_arrivo timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.corse OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 16460)
+-- Name: passeggeri; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.passeggeri (
+    id_passeggero integer NOT NULL,
+    nome character varying(50) NOT NULL,
+    cognome character varying(50) NOT NULL,
+    data_nascita date NOT NULL,
+    email character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.passeggeri OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 16411)
+-- Name: stazioni; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.stazioni (
+    id_stazione integer NOT NULL,
+    nome_stazione character varying(100),
+    citta character varying(100)
+);
+
+
+ALTER TABLE public.stazioni OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 16423)
+-- Name: tratte; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tratte (
+    id_tratta integer NOT NULL,
+    stazione_partenza_id integer NOT NULL,
+    stazione_arrivo_id integer NOT NULL,
+    durata time with time zone NOT NULL
+);
+
+
+ALTER TABLE public.tratte OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 16438)
+-- Name: treni; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.treni (
+    id_treno integer NOT NULL,
+    nome_treno character varying(50) NOT NULL,
+    numero_carrozze integer NOT NULL
+);
+
+
+ALTER TABLE public.treni OWNER TO postgres;
 
 --
 -- TOC entry 3725 (class 0 OID 16478)
@@ -120,7 +236,232 @@ COPY public.treni (id_treno, nome_treno, numero_carrozze) FROM stdin;
 \.
 
 
--- Completed on 2025-04-02 12:37:35 CEST
+--
+-- TOC entry 3543 (class 2606 OID 24628)
+-- Name: biglietti ck_biglietti_codice_pnr_length; Type: CHECK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.biglietti
+    ADD CONSTRAINT ck_biglietti_codice_pnr_length CHECK (((length((codice_pnr)::text) = 6) AND ((codice_pnr)::text ~ '^[A-Z0-9]+$'::text))) NOT VALID;
+
+
+--
+-- TOC entry 3544 (class 2606 OID 24607)
+-- Name: biglietti ck_biglietti_prezzo_positivo; Type: CHECK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.biglietti
+    ADD CONSTRAINT ck_biglietti_prezzo_positivo CHECK ((prezzo > (0)::numeric)) NOT VALID;
+
+
+--
+-- TOC entry 3545 (class 2606 OID 24610)
+-- Name: cambi ck_cambi_ordine_cambio_non_zero; Type: CHECK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.cambi
+    ADD CONSTRAINT ck_cambi_ordine_cambio_non_zero CHECK ((ordine_cambio <> 0)) NOT VALID;
+
+
+--
+-- TOC entry 3546 (class 2606 OID 24609)
+-- Name: cambi ck_cambi_ordine_cambio_positivo; Type: CHECK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.cambi
+    ADD CONSTRAINT ck_cambi_ordine_cambio_positivo CHECK ((ordine_cambio > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3541 (class 2606 OID 24611)
+-- Name: corse ck_corse_arrivo_dopo_partenza; Type: CHECK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.corse
+    ADD CONSTRAINT ck_corse_arrivo_dopo_partenza CHECK ((data_ora_arrivo > data_ora_partenza)) NOT VALID;
+
+
+--
+-- TOC entry 3542 (class 2606 OID 24672)
+-- Name: passeggeri ck_passeggeri_email; Type: CHECK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.passeggeri
+    ADD CONSTRAINT ck_passeggeri_email CHECK (((email)::text ~ '^[^\s@]+@[^\s@]+\.[^\s@]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3560 (class 2606 OID 24627)
+-- Name: biglietti codice_pnr; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.biglietti
+    ADD CONSTRAINT codice_pnr UNIQUE (codice_pnr);
+
+
+--
+-- TOC entry 3556 (class 2606 OID 24658)
+-- Name: passeggeri email; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.passeggeri
+    ADD CONSTRAINT email UNIQUE (email);
+
+
+--
+-- TOC entry 3562 (class 2606 OID 16484)
+-- Name: biglietti id_biglietto; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.biglietti
+    ADD CONSTRAINT id_biglietto PRIMARY KEY (id_biglietto);
+
+
+--
+-- TOC entry 3564 (class 2606 OID 24586)
+-- Name: cambi id_cambio; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cambi
+    ADD CONSTRAINT id_cambio PRIMARY KEY (id_cambio);
+
+
+--
+-- TOC entry 3554 (class 2606 OID 16449)
+-- Name: corse id_corsa; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.corse
+    ADD CONSTRAINT id_corsa PRIMARY KEY (id_corsa);
+
+
+--
+-- TOC entry 3558 (class 2606 OID 16466)
+-- Name: passeggeri id_passeggero; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.passeggeri
+    ADD CONSTRAINT id_passeggero PRIMARY KEY (id_passeggero);
+
+
+--
+-- TOC entry 3548 (class 2606 OID 16417)
+-- Name: stazioni id_stazione; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.stazioni
+    ADD CONSTRAINT id_stazione PRIMARY KEY (id_stazione);
+
+
+--
+-- TOC entry 3550 (class 2606 OID 16427)
+-- Name: tratte id_tratta; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tratte
+    ADD CONSTRAINT id_tratta PRIMARY KEY (id_tratta);
+
+
+--
+-- TOC entry 3552 (class 2606 OID 16444)
+-- Name: treni id_treno; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.treni
+    ADD CONSTRAINT id_treno PRIMARY KEY (id_treno);
+
+
+--
+-- TOC entry 3571 (class 2606 OID 24587)
+-- Name: cambi fk_biglietti; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cambi
+    ADD CONSTRAINT fk_biglietti FOREIGN KEY (biglietto_id) REFERENCES public.biglietti(id_biglietto);
+
+
+--
+-- TOC entry 3572 (class 2606 OID 24597)
+-- Name: cambi fk_corsa_arrivo; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cambi
+    ADD CONSTRAINT fk_corsa_arrivo FOREIGN KEY (corsa_arrivo_id) REFERENCES public.corse(id_corsa);
+
+
+--
+-- TOC entry 3573 (class 2606 OID 24592)
+-- Name: cambi fk_corsa_partenza; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cambi
+    ADD CONSTRAINT fk_corsa_partenza FOREIGN KEY (corsa_partenza_id) REFERENCES public.corse(id_corsa);
+
+
+--
+-- TOC entry 3569 (class 2606 OID 16487)
+-- Name: biglietti fk_corse; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.biglietti
+    ADD CONSTRAINT fk_corse FOREIGN KEY (corsa_id) REFERENCES public.corse(id_corsa);
+
+
+--
+-- TOC entry 3570 (class 2606 OID 16492)
+-- Name: biglietti fk_passegero; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.biglietti
+    ADD CONSTRAINT fk_passegero FOREIGN KEY (passeggero_id) REFERENCES public.passeggeri(id_passeggero);
+
+
+--
+-- TOC entry 3574 (class 2606 OID 24602)
+-- Name: cambi fk_stazione_cambio; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cambi
+    ADD CONSTRAINT fk_stazione_cambio FOREIGN KEY (stazione_cambio_id) REFERENCES public.stazioni(id_stazione);
+
+
+--
+-- TOC entry 3567 (class 2606 OID 16450)
+-- Name: corse fk_tratte; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.corse
+    ADD CONSTRAINT fk_tratte FOREIGN KEY (tratta_id) REFERENCES public.tratte(id_tratta);
+
+
+--
+-- TOC entry 3565 (class 2606 OID 16433)
+-- Name: tratte fk_tratte_stazione_arrivo; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tratte
+    ADD CONSTRAINT fk_tratte_stazione_arrivo FOREIGN KEY (stazione_arrivo_id) REFERENCES public.stazioni(id_stazione);
+
+
+--
+-- TOC entry 3566 (class 2606 OID 16428)
+-- Name: tratte fk_tratte_stazione_partenza; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tratte
+    ADD CONSTRAINT fk_tratte_stazione_partenza FOREIGN KEY (stazione_partenza_id) REFERENCES public.stazioni(id_stazione);
+
+
+--
+-- TOC entry 3568 (class 2606 OID 16455)
+-- Name: corse fk_treni; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.corse
+    ADD CONSTRAINT fk_treni FOREIGN KEY (treno_id) REFERENCES public.treni(id_treno);
+
+
+-- Completed on 2025-04-02 13:08:35 CEST
 
 --
 -- PostgreSQL database dump complete
