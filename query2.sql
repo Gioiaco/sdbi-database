@@ -6,3 +6,4 @@ JOIN Stazioni s_partenza ON t.Stazione_Partenza_ID = s_partenza.ID_Stazione
 JOIN Stazioni s_arrivo ON t.Stazione_Arrivo_ID = s_arrivo.ID_Stazione
 JOIN Passeggeri p ON b.Passeggero_ID = p.ID_Passeggero
 WHERE p.Email = 'bob.bianchi@email.com'
+ORDER BY b.Data_Ora_Acquisto DESC;
