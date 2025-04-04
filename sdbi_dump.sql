@@ -5,7 +5,7 @@
 -- Dumped from database version 17.4 (Postgres.app)
 -- Dumped by pg_dump version 17.0
 
--- Started on 2025-04-02 13:08:35 CEST
+-- Started on 2025-04-04 13:58:53 CEST
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -145,8 +145,10 @@ COPY public.biglietti (id_biglietto, codice_pnr, corsa_id, passeggero_id, data_o
 501	AXB123	301	401	2025-04-10 15:30:00	55.00	12A
 502	CXD456	302	402	2025-04-11 09:15:00	60.00	5B
 503	EFG789	303	403	2025-04-12 18:40:00	25.00	NULL
-504	HIJ012	304	401	2025-04-13 11:00:00	30.00	3C
 505	BGT678	305	402	2025-04-14 11:45:00	80.00	3C
+504	HIJ012	304	401	2025-04-13 11:00:00	30.00	3C
+506	RTY654	309	404	2025-04-16 14:45:00	70.00	8D
+507	WXY987	303	405	2025-04-20 10:00:00	85.00	15B
 \.
 
 
@@ -158,6 +160,10 @@ COPY public.biglietti (id_biglietto, codice_pnr, corsa_id, passeggero_id, data_o
 
 COPY public.cambi (id_cambio, biglietto_id, ordine_cambio, corsa_partenza_id, corsa_arrivo_id, stazione_cambio_id, orario_arrivo_precedente, orario_partenza_successivo) FROM stdin;
 601	504	1	304	\N	3	2025-04-16 11:00:00	2025-04-16 11:30:00
+603	505	1	309	310	5	2025-04-20 11:00:00	2025-04-20 11:30:00
+604	506	1	303	311	3	2025-04-25 10:00:00	2025-04-25 10:30:00
+605	506	2	311	312	5	2025-04-25 10:20:00	2025-04-25 10:50:00
+606	506	3	312	313	6	2025-04-25 11:35:00	2025-04-25 12:14:00
 \.
 
 
@@ -174,6 +180,11 @@ COPY public.corse (id_corsa, tratta_id, treno_id, data_ora_partenza, data_ora_ar
 304	104	203	2025-04-16 11:00:00	2025-04-16 13:00:00
 305	105	202	2025-04-16 15:00:00	2025-04-16 16:55:00
 306	106	203	2025-04-17 12:00:00	2025-04-17 15:30:00
+309	109	201	2025-04-20 09:00:00	2025-04-20 11:00:00
+310	110	202	2025-04-20 11:30:00	2025-04-20 13:00:00
+311	111	203	2025-04-25 09:30:00	2025-04-25 10:20:00
+312	112	203	2025-04-25 10:50:00	2025-04-25 11:35:00
+313	113	203	2025-04-25 12:05:00	2025-04-25 12:45:00
 \.
 
 
@@ -188,8 +199,9 @@ COPY public.passeggeri (id_passeggero, nome, cognome, data_nascita, email) FROM 
 402	Bob	Bianchi	1985-11-20	bob.bianchi@email.com
 403	Carlo	Verdi	2000-02-10	carlo.verdi@email.com
 404	Mario	Neri	1988-12-31	mario.neri@email.it
-405	filippo	bruno	1990-09-08	filippobruno@email.it
 406	Filippo	Bruno	1988-09-08	filippo.bruno@email.com
+405	Flavio	Bruno	1990-09-08	flaviobruno@email.it
+407	Laura	Gialli	1992-07-22	lauragialli@email.com
 \.
 
 
@@ -204,6 +216,8 @@ COPY public.stazioni (id_stazione, nome_stazione, citta) FROM stdin;
 2	Milano Centrale	Milano
 3	Firenze SMN	Firenze
 4	Napoli Centrale	Napoli
+5	Bologna Centrale	Bologna
+6	Piacenza	Piacenza
 \.
 
 
@@ -220,6 +234,11 @@ COPY public.tratte (id_tratta, stazione_partenza_id, stazione_arrivo_id, durata)
 104	3	2	02:00:00+01
 105	2	3	01:55:00+01
 106	3	4	03:30:00+01
+109	1	5	02:00:00+02
+110	5	2	01:30:00+02
+111	3	5	00:50:00+02
+112	5	6	00:45:00+02
+113	6	2	00:40:00+02
 \.
 
 
@@ -461,7 +480,7 @@ ALTER TABLE ONLY public.corse
     ADD CONSTRAINT fk_treni FOREIGN KEY (treno_id) REFERENCES public.treni(id_treno);
 
 
--- Completed on 2025-04-02 13:08:35 CEST
+-- Completed on 2025-04-04 13:58:53 CEST
 
 --
 -- PostgreSQL database dump complete
