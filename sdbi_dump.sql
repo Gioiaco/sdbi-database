@@ -5,7 +5,7 @@
 -- Dumped from database version 17.4 (Postgres.app)
 -- Dumped by pg_dump version 17.0
 
--- Started on 2025-04-04 13:58:53 CEST
+-- Started on 2025-04-04 15:37:18 CEST
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -159,11 +159,11 @@ COPY public.biglietti (id_biglietto, codice_pnr, corsa_id, passeggero_id, data_o
 --
 
 COPY public.cambi (id_cambio, biglietto_id, ordine_cambio, corsa_partenza_id, corsa_arrivo_id, stazione_cambio_id, orario_arrivo_precedente, orario_partenza_successivo) FROM stdin;
-601	504	1	304	\N	3	2025-04-16 11:00:00	2025-04-16 11:30:00
 603	505	1	309	310	5	2025-04-20 11:00:00	2025-04-20 11:30:00
 604	506	1	303	311	3	2025-04-25 10:00:00	2025-04-25 10:30:00
 605	506	2	311	312	5	2025-04-25 10:20:00	2025-04-25 10:50:00
 606	506	3	312	313	6	2025-04-25 11:35:00	2025-04-25 12:14:00
+601	504	1	304	309	3	2025-04-16 11:00:00	2025-04-16 11:30:00
 \.
 
 
@@ -252,6 +252,12 @@ COPY public.treni (id_treno, nome_treno, numero_carrozze) FROM stdin;
 201	Frecciarossa 1000	10
 202	Italo EVO	8
 203	Regionale Veloce	5
+204	Intercity Notte	12
+205	Regionale	4
+206	Frecciargento	9
+207	Eurostar Italia	11
+208	Intercity Giorno	7
+209	Frecciarossa	9
 \.
 
 
@@ -480,7 +486,7 @@ ALTER TABLE ONLY public.corse
     ADD CONSTRAINT fk_treni FOREIGN KEY (treno_id) REFERENCES public.treni(id_treno);
 
 
--- Completed on 2025-04-04 13:58:53 CEST
+-- Completed on 2025-04-04 15:37:18 CEST
 
 --
 -- PostgreSQL database dump complete
